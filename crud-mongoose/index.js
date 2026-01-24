@@ -1,22 +1,13 @@
 const express = require('express');
-const { dbConnection } = require('./config/config');
-const routes = require('./routes');
-
+require('dotenv').config();
 const app = express();
-const PORT = 8080;
+const PORT = process.env.PORT;
+const { dbConnection } = require('./config/config');
+const tasksRoutes = require('./routes/tasks');
 
-// Middleware para parsear JSON
 app.use(express.json());
+app.use('/', tasksRoutes);
 
-// Conectar rutas
-app.use('/', routes);
+dbConnection();
 
-// Conectar base de datos
-dbConnection()
-    .then(() => console.log('Conexión a MongoDB exitosa'))
-    .catch(err => console.error('Error al conectar a MongoDB:', err));
-
-// Levantar servidor
-app.listen(PORT, () => {
-    console.log(`Servidor iniciado en http://localhost:${PORT}`);
-});
+app.listen(PORT, () => console.log(`Servidor iniciado en http://localhost:${PORT}`));
